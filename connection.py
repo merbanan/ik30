@@ -82,8 +82,11 @@ tn = connect_telnet(sys.argv[1])
 with open(sys.argv[2]+'.csv') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
-        send_neuros_id(tn, row['neurosid'])
-        kWh = get_kWh_answer(tn)
+# retry until good value
+        kWh = -2
+        while kWh == -2:
+            send_neuros_id(tn, row['neurosid'])
+            kWh = get_kWh_answer(tn)
         print "{ \"id\": %s, \"net\": %s, \"kWh\": %d }" % (row['id'], sys.argv[2], kWh)
 
 
